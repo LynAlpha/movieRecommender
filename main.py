@@ -75,4 +75,4 @@ def recommend(input_movie, matrix, n, similar_genre=True):
 
 recommend_result = recommend('The Dark Knight',matrix,10,similar_genre=True)
 
-pd.DataFrame(recommend_result, columns=['Title','Correlation','Genres'])
+print(pd.DataFrame(recommend_result, columns=['Title','Correlation','Genres']))
