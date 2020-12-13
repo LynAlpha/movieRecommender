@@ -36,7 +36,7 @@ data = pd.merge(ratings,meta,on='movieId',how='inner')
 data.head()
 
 matrix = data.pivot_table(index='userId',columns='original_title',values='rating')
-
+matrix_u = data.pivot_table(index='original_title',columns='userId',values='rating')
 matrix.head(20)
 
 GENRE_WEIGHT = 0.1
@@ -46,7 +46,7 @@ def pearsonR(s1, s2):
     s2_c = s2 - s2.mean()
     return np.sum(s1_c * s2_c) / np.sqrt(np.sum(s1_c ** 2) * np.sum(s2_c ** 2))
 
-def recommend(input_movie, matrix, n, similar_genre=True):
+def movie_based(input_movie, matrix, n, similar_genre=True):
     input_genres = meta[meta['original_title'] == input_movie]['genres'].iloc(0)[0]
 
     result = []
@@ -73,6 +73,26 @@ def recommend(input_movie, matrix, n, similar_genre=True):
 
     return result[:n]
 
-recommend_result = recommend('The Dark Knight',matrix,10,similar_genre=True)
+def user_based(input_user, matrix_u, n):
+    result = []
+    for user in matrix_u.columns:
+        if user == input_user:
+            continue
+
+        cor = pearsonR(matrix_u[input_user], matrix_u[user])
+
+        if np.isnan(cor):
+            continue
+        else:
+            result.append((user, '{:.2f}'.format(cor)))
+
+    result.sort(key=lambda r: r[1], reverse=True)
+    result = result[:n]
+    
+    return result[:n]
+
+recommend_result = movie_based('The Dark Knight',matrix,10,similar_genre=True)
+recommend_userb = user_based(300, matrix_u, 10)
 
 print(pd.DataFrame(recommend_result, columns=['Title','Correlation','Genres']))
+print(pd.DataFrame(recommend_userb, columns=['User', 'Correlation']))
