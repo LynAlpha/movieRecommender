@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import json
+import ast
 
 meta = pd.read_csv('movie_dataset/movies_metadata.csv')
 
@@ -88,11 +89,39 @@ def user_based(input_user, matrix_u, n):
 
     result.sort(key=lambda r: r[1], reverse=True)
     result = result[:n]
-    
-    return result[:n]
 
-recommend_result = movie_based('The Dark Knight',matrix,10,similar_genre=True)
-recommend_userb = user_based(300, matrix_u, 10)
+    return result
 
-print(pd.DataFrame(recommend_result, columns=['Title','Correlation','Genres']))
-print(pd.DataFrame(recommend_userb, columns=['User', 'Correlation']))
+#recommend_result = movie_based('The Dark Knight',matrix,10,similar_genre=True)
+#recommend_userb = user_based(45, matrix_u, 10)
+
+#print(pd.DataFrame(recommend_result, columns=['Title','Correlation','Genres']))
+#print(pd.DataFrame(recommend_userb, columns=['User', 'Correlation']))
+#print(recommend_userb)
+
+def user_rating_based(input_user):
+    likedmovie = []
+    for titidx in range(len(matrix.loc[input_user])):
+        if np.isnan(matrix.loc[input_user][titidx]) is True:
+            continue
+        elif matrix.loc[input_user][titidx] >= 3.0:
+            likedmovie.append(str(matrix.columns[titidx]))
+
+    movielist = []
+    for tit in likedmovie:
+        movielist.append(movie_based(tit, matrix, 10, similar_genre=True))
+    temp =[]
+    for i in movielist:
+        if i not in temp:
+            temp.append(i)
+    movielist = temp
+    movielist = [x for x in movielist if x not in likedmovie]
+    return movielist
+
+'''              
+def recom(input_user):
+    movies = user_rating_based(input_user)
+    simusers = user_based(input_user, matrix_u, 5)
+    recmovies = list()
+    for friend in simusers:'''
+        recmovies
