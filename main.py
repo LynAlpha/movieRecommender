@@ -113,13 +113,20 @@ def user_rating_based(input_user):
    
 def recom(input_user):
     movies = user_rating_based(input_user)
-    simusers = user_based(input_user, matrix_u, 5)
+    simusers = user_based(input_user, matrix_u, 3)
+    print('1')
     for friend in simusers:
-        movies.append(user_rating_based(friend))
+        for titidx in range(len(matrix.loc[friend])):
+            if np.isnan(matrix.loc[friend][titidx]) is True:
+                continue
+            elif matrix.loc[friend][titidx] >= 3.0:
+                movies.append(str(matrix.columns[titidx]))
+    print('2')
     temp =[]
     for t in movies:
         for i in t:
             if i not in temp:
                 temp.append(i)
+                print(i)
     movies = pd.DataFrame(movies, columns=['Title', 'Corr', 'Gen.'])
     return movies 
