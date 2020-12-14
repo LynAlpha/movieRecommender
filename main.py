@@ -68,9 +68,9 @@ def movie_based(input_movie, matrix, n, similar_genre=True):
         if np.isnan(cor):
             continue
         else:
-            result.append((title, '{:.2f}'.format(cor), temp_genres))
+            result.append(title)
             
-    result.sort(key=lambda r: r[1], reverse=True)
+    #result.sort(key=lambda r: r[1], reverse=True)
 
     return result[:n]
 
@@ -85,10 +85,7 @@ def user_based(input_user, matrix_u, n):
         if np.isnan(cor):
             continue
         else:
-            result.append((user, '{:.2f}'.format(cor)))
-
-    result.sort(key=lambda r: r[1], reverse=True)
-    result = result[:n]
+            result.append(user)
 
     return result
 
@@ -110,18 +107,19 @@ def user_rating_based(input_user):
     movielist = []
     for tit in likedmovie:
         movielist.append(movie_based(tit, matrix, 10, similar_genre=True))
-    temp =[]
-    for i in movielist:
-        if i not in temp:
-            temp.append(i)
-    movielist = temp
     movielist = [x for x in movielist if x not in likedmovie]
     return movielist
 
-'''              
+   
 def recom(input_user):
     movies = user_rating_based(input_user)
     simusers = user_based(input_user, matrix_u, 5)
-    recmovies = list()
-    for friend in simusers:'''
-        recmovies
+    for friend in simusers:
+        movies.append(user_rating_based(friend))
+    temp =[]
+    for t in movies:
+        for i in t:
+            if i not in temp:
+                temp.append(i)
+    movies = pd.DataFrame(movies, columns=['Title', 'Corr', 'Gen.'])
+    return movies 
