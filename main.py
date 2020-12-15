@@ -70,8 +70,6 @@ def movie_based(input_movie, matrix, n, similar_genre=True):
         else:
             result.append(title)
             
-    #result.sort(key=lambda r: r[1], reverse=True)
-
     return result[:n]
 
 def user_based(input_user, matrix_u, n):
@@ -89,12 +87,6 @@ def user_based(input_user, matrix_u, n):
 
     return result[:n]
 
-#recommend_result = movie_based('The Dark Knight',matrix,10,similar_genre=True)
-#recommend_userb = user_based(45, matrix_u, 10)
-
-#print(pd.DataFrame(recommend_result, columns=['Title','Correlation','Genres']))
-#print(pd.DataFrame(recommend_userb, columns=['User', 'Correlation']))
-#print(recommend_userb)
 
 def user_rating_based(input_user):
     likedmovie = []
@@ -104,11 +96,9 @@ def user_rating_based(input_user):
         elif matrix.loc[input_user][titidx] >= 3.0:
             likedmovie.append(str(matrix.columns[titidx]))
 
-    #print(likedmovie)
     movielist = []
     for tit in likedmovie:
         movielist.extend(movie_based(tit, matrix, 10, similar_genre=True))
-    #print(movielist)
     movielist = [x for x in movielist if x not in likedmovie]
     return movielist
 
@@ -116,7 +106,6 @@ def user_rating_based(input_user):
 def recom(input_user):
     movies = user_rating_based(input_user)
     simusers = user_based(input_user, matrix_u, 1)
-    print(simusers)
     for friend in simusers:
         for titidx in range(len(matrix.loc[friend])):
             if np.isnan(matrix.loc[friend][titidx]) is True:
@@ -128,4 +117,6 @@ def recom(input_user):
     for t in movies:
         if t not in temp:
             temp.append(t)
-    return temp 
+    print('Recommend movies')
+    print(temp)
+    return 
